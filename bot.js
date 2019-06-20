@@ -57,7 +57,7 @@ client.connect(err => {
                     // Keep entry if there is no difference
                     // Add entry if it doens't exist
 
-                    var oldShow = Shows.find({'slug': show.slug})
+                    var oldShow = Shows.findOne({'slug': show.slug});
 
                     oldShow.toArray().then(res => {
                         // If this show does not exist
@@ -92,9 +92,9 @@ client.connect(err => {
     }
 });
 
-function getMixcloudData(offset) {
+async function getMixcloudData(offset) {
     try {
-        return axios.get('https://api.mixcloud.com/8ballradio/playlists/', {
+        return await axios.get('https://api.mixcloud.com/8ballradio/playlists/', {
             params: {
                 limit: 100,
                 offset: offset
@@ -105,9 +105,9 @@ function getMixcloudData(offset) {
     }
 }
 
-function getMixcloudShowInfo(slug) {
+async function getMixcloudShowInfo(slug) {
     try {
-        return axios.get('https://api.mixcloud.com/8ballradio/playlists/' +
+        return await axios.get('https://api.mixcloud.com/8ballradio/playlists/' +
             slug +
             '/cloudcasts/?limit=100'
         ).then(res => {return res.data.data});
@@ -127,3 +127,13 @@ function getMixcloudShowInfo(slug) {
 // then, connect to client and compare the collection with the rounded up data
 // save any data that has been modified
 // Fix client connection/close to only when it matters
+
+// make any API call blocking (await/async)
+// maybe need to do client in later
+// push/pull updated items
+
+// build links using offset to 1000, then get them all
+// build database after receiving all data
+// iterate through each entry and compare to mongodb db
+// if theres a difference found, update entry
+// if entry DNE, make it
