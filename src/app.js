@@ -26,13 +26,28 @@ var showSchema = new Schema({
   name: String
 });
 
-var Show = mongoose.model('Show', showSchema);
+var pageSchema = new Schema({
+  name: String
+});
+
+var Show = mongoose.model('Show', showSchema, 'shows');
+
+var Page = mongoose.model('Page', pageSchema, 'show_page');
 
 app.get('/shows', (req, res) => {
   Show.find({}, function (error, shows) {
     if (error) { console.log(error); }
     res.send({
       shows: shows
+    })
+  })
+})
+
+app.get('/show_page', (req, res) => {
+  Page.find({}, function (error, show_page) {
+    if (error) { console.log(error); }
+    res.send({
+      pages: show_page
     })
   })
 })
