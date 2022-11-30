@@ -17,6 +17,9 @@ client.connect(err => {
 
             console.log(data.length);
 
+            // Takes data from Mixcloud
+            // Compiles most recent data for comparison with MongoDB
+
             data.forEach((show) => {
                 console.log(show.name);
                 getMixcloudShowInfo(show.slug).then(casts => {
@@ -59,26 +62,29 @@ client.connect(err => {
 
                     var oldShow = Shows.findOne({'slug': show.slug});
 
-                    oldShow.toArray().then(res => {
+                    
+                    oldShow.then(res => {
                         // If this show does not exist
+                        //console.log(res);
                         if(res.length === 0){
-                            Shows.insertOne(show);
-                            console.log('1 document inserted... ' + 'Show name: ' + show.name);
+                            var {owner, ...showInfoToBeInserted} = show;
+                            Shows.insertOne(showInfoToBeInserted);
+                            console.log('1 document inserted... ' + 'Show name: ' + showInfoToBeInserted.name);
                         } else {
                             // compare everything but the _id
                             // if there is a difference, save the latest version
-                            var {_id, ...oldShowComp} = res[0];
+                            var {_id, ...oldShowComp} = res;
                             if(JSON.stringify(show) !== JSON.stringify(oldShowComp)){
-                                console.log(show);
-                                console.log(oldShowComp);
-                                Shows.deleteOne(res, function(err, obj){
+                                //console.log(show);
+                                //console.log(oldShowComp);
+                                /*Shows.deleteOne(res, function(err, obj){
                                     if(err) throw err;
                                     console.log("1 document deleted");
                                 });
                                 Shows.insertOne(show, function(err, res) {
                                     if(err) throw err;
                                     console.log('1 document updated... ' + 'Show name: ' + show.name);
-                                });
+                                });*/
                             }
                         }
                         
